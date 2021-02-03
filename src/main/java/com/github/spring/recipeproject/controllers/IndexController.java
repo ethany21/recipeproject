@@ -4,8 +4,10 @@ import com.github.spring.recipeproject.domain.Category;
 import com.github.spring.recipeproject.domain.UnitOfMeasure;
 import com.github.spring.recipeproject.repository.CategoryRepository;
 import com.github.spring.recipeproject.repository.UnitOfMeasureRepository;
+import com.github.spring.recipeproject.service.RecipeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Optional;
@@ -14,22 +16,17 @@ import java.util.Optional;
 @Controller
 public class IndexController {
 
-    private CategoryRepository categoryRepository;
-    private UnitOfMeasureRepository unitOfMeasureRepository;
+    private final RecipeService recipeService;
 
-    public IndexController(CategoryRepository categoryRepository, UnitOfMeasureRepository unitOfMeasureRepository) {
-        this.categoryRepository = categoryRepository;
-        this.unitOfMeasureRepository = unitOfMeasureRepository;
+    public IndexController(RecipeService recipeService) {
+        this.recipeService = recipeService;
     }
 
     @RequestMapping({"", "/", "/index"})
-    public String getIndexPage(){
+    public String getIndexPage(Model model){
         log.debug("Getting Index Page");
 
-        Optional<Category> categoryOptional = categoryRepository.findByDescription("Mexican");
-        Optional<UnitOfMeasure> unitOfMeasureOptional = unitOfMeasureRepository.findByDescription("Tablespoon");
-        System.out.println("catetory is " + categoryOptional.get().getId());
-        System.out.println("uom is " + unitOfMeasureOptional.get().getId());
+        model.addAttribute("recipes", recipeService.getRecipes());
 
         return "index";
     }
